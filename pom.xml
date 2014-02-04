@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>demo-sirona-simple</groupId>
+  <artifactId>demo-sirona-simple</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <dependencies>
+    <dependency> <!-- to be sure we have it for the copy dep -->
+      <groupId>org.apache.sirona</groupId>
+      <artifactId>sirona-javaagent</artifactId>
+      <version>0.2-incubating-SNAPSHOT</version>
+      <classifier>shaded</classifier>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.8</version>
+        <executions>
+          <execution>
+            <id>copy-sirona-agent</id>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.sirona</groupId>
+                  <artifactId>sirona-javaagent</artifactId>
+                  <classifier>shaded</classifier>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.openejb.maven</groupId>
+        <artifactId>tomee-maven-plugin</artifactId>
+        <version>1.6.1-SNAPSHOT</version>
+        <configuration>
+          <args>-javaagent:${project.build.directory}/dependency/sirona-javaagent-0.2-incubating-SNAPSHOT-shaded.jar=includes=prefix:org.superbiz</args>
+          <webapps>
+            <webapp>org.superbiz:rest-example:1.1.0-SNAPSHOT</webapp>
+          </webapps>
+          <tomeeClassifier>plus</tomeeClassifier>
+          <deployOpenEjbApplication>true</deployOpenEjbApplication>
+          <simpleLog>true</simpleLog>
+          <skipCurrentProject>true</skipCurrentProject>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
